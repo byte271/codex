@@ -282,6 +282,8 @@ pub fn create_wait_agent_tool_v1(options: WaitAgentTimeoutOptions) -> ToolSpec {
     })
 }
 
+/// LIFECYCLE AUDIT (#41142): this tool waits on mailbox activity, not a durable
+/// join over the child's terminal agent status. See `codex-agent-kernel/docs/UPSTREAM.md`.
 pub fn create_wait_agent_tool_v2(options: WaitAgentTimeoutOptions) -> ToolSpec {
     ToolSpec::Function(ResponsesApiTool {
         name: "wait_agent".to_string(),

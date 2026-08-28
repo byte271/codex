@@ -12,6 +12,7 @@ jobs:
   # version-controlled list that the main-branch ruleset should require.
   bazel:
     name: Bazel
+    if: ${{ github.repository == 'openai/codex' }}
     uses: ./.github/workflows/bazel.yml
     secrets: inherit
 
@@ -42,6 +43,7 @@ jobs:
 
   sdk:
     name: sdk
+    if: ${{ github.repository == 'openai/codex' }}
     uses: ./.github/workflows/sdk.yml
     secrets: inherit
 
@@ -69,4 +71,7 @@ jobs:
       - name: Require successful dependencies
         env:
           NEEDS: ${{ toJSON(needs) }}
+          # Forks lack Environment `bazel`, macos-15-xlarge billing, and the
+          # `{repo}-runners` groups that Bazel/sdk jobs require.
+          ALLOW_SKIP: ${{ github.repository != 'openai/codex' && 'bazel,sdk' }}
         run: python3 .github/scripts/check_ci_results.py

@@ -1,0 +1,18 @@
+[package]
+name = "codex-kernel-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+description = "CLI for the Codex Agent Kernel: replay, fork, view, bench"
+
+[[bin]]
+name = "codex-kernel"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+codex-agent-kernel = { path = "../kernel" }
+codex-kernel-observe = { path = "../observe" }
+serde_json.workspace = true

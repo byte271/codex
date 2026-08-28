@@ -644,6 +644,9 @@ impl UnifiedExecProcessManager {
         let process_id = request.process_id;
         let (response_process_id, exit_code) = if process_started_alive {
             match self.refresh_process_state(process_id).await {
+                // LIFECYCLE AUDIT (#34866): Alive → Some(process_id) is internally
+                // consistent. Tool/wrapper "Script completed" is a second view that
+                // does not have to match this arm. Evidence: codex-agent-kernel/docs/UPSTREAM.md
                 ProcessStatus::Alive {
                     exit_code,
                     process_id,

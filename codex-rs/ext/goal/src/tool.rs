@@ -235,6 +235,9 @@ impl GoalToolExecutor {
         &self,
         invocation: ToolCall<'_>,
     ) -> Result<Box<dyn ToolOutput>, FunctionCallError> {
+        // LIFECYCLE AUDIT (#41176): Complete/Blocked are accepted after parse +
+        // budget accounting. There is no live child or unified-exec process gate.
+        // See codex-agent-kernel/docs/UPSTREAM.md.
         let args: UpdateGoalArgs = parse_arguments(invocation.function_arguments()?)?;
         if !matches!(
             args.status,

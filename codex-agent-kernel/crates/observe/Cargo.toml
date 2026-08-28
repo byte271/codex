@@ -1,0 +1,18 @@
+[package]
+name = "codex-kernel-observe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+description = "Observation-only adapter from Codex lifecycle facts into the Agent Kernel"
+
+[dependencies]
+codex-agent-kernel = { path = "../kernel" }
+serde.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+tempfile.workspace = true

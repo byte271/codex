@@ -21,6 +21,10 @@
 //! - `process.rs`: PTY process lifecycle + output buffering.
 //! - `process_state.rs`: shared exit/failure state for local and remote processes.
 //! - `process_manager.rs`: orchestration (approvals, sandboxing, reuse) and request handling.
+//!
+//! LIFECYCLE AUDIT (#34866): a yield while `ProcessStatus::Alive` correctly returns
+//! `process_id = Some(...)`. Wrapper/code-mode "Script completed" does not consult that
+//! status. See `codex-agent-kernel/docs/UPSTREAM.md`.
 
 use std::collections::HashMap;
 use std::collections::HashSet;

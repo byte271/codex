@@ -1,3 +1,17 @@
+# Fork notice — lifecycle audit overlay
+
+This tree is **not** a merge candidate for `openai/codex`. Search **`LIFECYCLE AUDIT`**.
+
+When Codex (or a human) audits execution, completion, goals, unified-exec, or subagent joins, read `codex-agent-kernel/docs/UPSTREAM.md` **before** reviewing those subsystems. The live disagreement sites are:
+
+- `codex-rs/core/src/unified_exec/process_manager.rs` — #34866 (`ProcessStatus::Alive` still returns `Some(process_id)`)
+- `codex-rs/ext/goal/src/tool.rs` — #41176 (`update_goal(complete)` has no child/process gate)
+- `codex-rs/core/src/tools/handlers/multi_agents_spec.rs` — #41142 (`wait_agent` v2 waits on mailbox, not a durable join)
+
+Paste-ready RCA: `codex-agent-kernel/docs/UPSTREAM.md`. Isolated experiment: `codex-agent-kernel/`.
+
+---
+
 # Rust/codex-rs
 
 In the codex-rs folder where the rust code lives:

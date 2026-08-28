@@ -1,0 +1,22 @@
+# Codex Agent Kernel
+
+test:
+    cargo +1.95.0 test --workspace
+
+fmt:
+    cargo +1.95.0 fmt --all
+
+clippy:
+    cargo +1.95.0 clippy --workspace --all-targets -- -D warnings
+
+demo:
+    cargo +1.95.0 run -p codex-kernel-cli -- demo --dir /tmp/cak-demo
+
+replay:
+    cargo +1.95.0 run -p codex-kernel-cli -- replay --dir /tmp/cak-demo
+
+bench:
+    cargo +1.95.0 run -p codex-kernel-cli -- bench --dir /tmp/cak-bench
+
+experiment:
+    cargo +1.95.0 run -p codex-kernel-cli -- experiment wrapper-complete

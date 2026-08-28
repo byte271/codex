@@ -1,0 +1,75 @@
+name: Codex Agent Kernel
+
+on:
+  pull_request:
+    paths:
+      - "codex-agent-kernel/**"
+      - ".github/workflows/codex-agent-kernel.yml"
+  push:
+    branches: [main]
+    paths:
+      - "codex-agent-kernel/**"
+      - ".github/workflows/codex-agent-kernel.yml"
+  workflow_dispatch:
+    inputs:
+      soak:
+        description: "Run 10k property cases"
+        type: boolean
+        default: false
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: codex-agent-kernel
+    env:
+      CAK_PROPTEST_CASES: "256"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e081816240890017053eacbb1bdf337761dc5582 # 1.95.0
+        with:
+          components: rustfmt, clippy
+      - name: Record commit
+        shell: bash
+        run: echo "tested_commit=${GITHUB_SHA}"
+      - name: rustfmt
+        if: runner.os == 'Linux'
+        run: cargo fmt --all -- --check
+      - name: clippy
+        if: runner.os == 'Linux'
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: cargo test
+        run: cargo test --workspace
+      - name: Reap leftover Windows test processes
+        if: runner.os == 'Windows' && always()
+        shell: pwsh
+        run: Get-Process -Name ping -ErrorAction SilentlyContinue | Stop-Process -Force
+
+  soak:
+    name: soak (10k property cases)
+    if: github.event_name == 'workflow_dispatch' && inputs.soak
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: codex-agent-kernel
+    env:
+      CAK_PROPTEST_CASES: "10000"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e081816240890017053eacbb1bdf337761dc5582 # 1.95.0
+        with:
+          components: rustfmt
+      - name: Record commit
+        run: echo "tested_commit=${GITHUB_SHA}"
+      - name: property + fault tests
+        run: cargo test --workspace --test property --test fault_injection
